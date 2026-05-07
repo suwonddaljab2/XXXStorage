@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>구글 로그인 - 최신 방식</title>
+    <style>
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #user-info {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>😊 구글 로그인 (최신 모듈 방식)</h2>
+    
+    <div id="login-section">
+        <button id="google-login-btn">🔑 Google로 로그인</button>
+    </div>
+    
+    <div id="user-info" style="display:none;">
+        <h3>✅ 로그인 성공!</h3>
+        <p><strong>이름:</strong> <span id="user-name"></span></p>
+        <p><strong>이메일:</strong> <span id="user-email"></span></p>
+        <p><strong>프로필 사진:</strong> <img id="user-photo" width="50" style="border-radius:50%"></p>
+        <button id="logout-btn">로그아웃</button>
+    </div>
+
+    <script type="module">
+        // Firebase 모듈 import
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+        
+        // 본인의 Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyBB30ZGz7EK5wgNtvrgPyC72FQtOHUEsWY",
+            authDomain: "xxxstorage-17e8d.firebaseapp.com",
+            projectId: "xxxstorage-17e8d",
+            storageBucket: "xxxstorage-17e8d.firebasestorage.app",
+            messagingSenderId: "700686462389",
+            appId: "1:700686462389:web:6d609f0ce5fe5319477dfc",
+            measurementId: "G-DTWYBG2TFT"
+        };
+
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // DOM 요소
+        const loginSection = document.getElementById('login-section');
+        const userInfoDiv = document.getElementById('user-info');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userNameSpan = document.getElementById('user-name');
+        const userEmailSpan = document.getElementById('user-email');
+        const userPhotoImg = document.getElementById('user-photo');
+
+        // 구글 로그인 버튼
+        googleLoginBtn.addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log('로그인 성공:', result.user);
+            } catch (error) {
+                console.error('로그인 에러:', error);
+                alert('로그인 실패: ' + error.message);
+            }
+        });
+
+        // 로그아웃 버튼
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log('로그아웃 성공');
+            } catch (error) {
+                console.error('로그아웃 에러:', error);
+            }
+        });
+
+        // 로그인 상태 감지
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // 로그인됨
+                loginSection.style.display = 'none';
+                userInfoDiv.style.display = 'block';
+                userNameSpan.textContent = user.displayName;
+                userEmailSpan.textContent = user.email;
+                userPhotoImg.src = user.photoURL || '';
+            } else {
+                // 로그아웃됨
+                loginSection.style.display = 'block';
+                userInfoDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

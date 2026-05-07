@@ -1,106 +1,534 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>구글 로그인 - 최신 방식</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Modern Login | Google Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px;
-            cursor: pointer;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        #user-info {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        /* 메인 카드 컨테이너 */
+        .glass-card {
+            max-width: 520px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 헤더 영역 */
+        .brand-header {
+            padding: 2rem 2rem 1rem 2rem;
+            text-align: center;
+            background: white;
+            border-bottom: 1px solid #f0f2f4;
+        }
+
+        .brand-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e2a3a, #0f1a24);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-header p {
+            color: #5b6778;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* 콘텐츠 영역 (로그인 or 본문) */
+        .content-panel {
+            padding: 2rem 2rem 2.2rem 2rem;
+            transition: all 0.25s ease-in-out;
+        }
+
+        /* 로그인 섹션 스타일 (세련된 버튼) */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-title {
+            font-size: 1.65rem;
+            font-weight: 600;
+            color: #1f2a3e;
+            margin-bottom: 0.25rem;
+        }
+
+        .login-sub {
+            font-size: 0.9rem;
+            color: #6c7a8e;
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        /* 구글 버튼 디자인 - 최신 트렌드 */
+        .google-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+            background: white;
+            border: 1px solid #dadce0;
+            border-radius: 56px;
+            padding: 0.85rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            color: #1f2a3e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            background-color: #ffffff;
+        }
+
+        .google-login-btn:hover {
+            background-color: #f8fafc;
+            border-color: #c7cdd4;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .google-login-btn:active {
+            transform: scale(0.98);
+            background-color: #f1f3f4;
+        }
+
+        .google-icon {
+            width: 22px;
+            height: 22px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z'%3E%3C/path%3E%3Cpath fill='%2334A853' d='M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z'%3E%3C/path%3E%3Cpath fill='%234285F4' d='M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z'%3E%3C/path%3E%3Cpath fill='%23FBBC05' d='M43.611,20.083L43.595,20L24,20v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        /* 로그인 후 표시될 본문 영역 (콘텐츠) */
+        .dashboard-content {
+            animation: fadeInUp 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .user-profile-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #eef2f8;
+            margin-bottom: 1.8rem;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 1.25rem;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .avatar-wrapper {
+            flex-shrink: 0;
+        }
+
+        .avatar-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 6px 12px -6px rgba(0, 0, 0, 0.15);
+            background: #f0f2f5;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-details h3 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #0b1c2c;
+            letter-spacing: -0.2px;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-email-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #f0f4f9;
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c3e50;
+            gap: 6px;
+        }
+
+        .welcome-message {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #2c3e50;
+            background: #f8fafd;
+            padding: 1rem 1.2rem;
+            border-radius: 1.2rem;
+            margin-top: 0.5rem;
+            border-left: 4px solid #2a7de1;
+        }
+
+        .welcome-message p {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .sample-article {
+            margin-top: 1.8rem;
+            background: #ffffff;
+            border-radius: 1.2rem;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid #ecf3fa;
+            transition: all 0.2s;
+        }
+
+        .sample-article h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: #1e2f3f;
+        }
+
+        .sample-article p {
+            color: #4a5a72;
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        /* 로그아웃 버튼 스타일 - 모던 아웃라인 */
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid #cfdfed;
+            padding: 0.7rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            color: #4a627a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: auto;
+            background: white;
+            margin-top: 0.2rem;
+        }
+
+        .logout-btn:hover {
+            background-color: #fef2f0;
+            border-color: #e0b4b0;
+            color: #bc5448;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .logout-btn:active {
+            transform: scale(0.97);
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.8rem;
+        }
+
+        .hidden-section {
+            display: none;
+        }
+
+        .visible-section {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 반응형 */
+        @media (max-width: 500px) {
+            .glass-card {
+                border-radius: 1.5rem;
+            }
+            .content-panel {
+                padding: 1.5rem;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .action-row {
+                justify-content: center;
+            }
+            .avatar-img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8f9bb3;
+            margin-top: 1.5rem;
+            border-top: 1px solid #eef2f6;
+            padding-top: 1.2rem;
         }
     </style>
 </head>
 <body>
 
-    <h2>😊 구글 로그인 (최신 모듈 방식)</h2>
-    
-    <div id="login-section">
-        <button id="google-login-btn">🔑 Google로 로그인</button>
-    </div>
-    
-    <div id="user-info" style="display:none;">
-        <h3>✅ 로그인 성공!</h3>
-        <p><strong>이름:</strong> <span id="user-name"></span></p>
-        <p><strong>이메일:</strong> <span id="user-email"></span></p>
-        <p><strong>프로필 사진:</strong> <img id="user-photo" width="50" style="border-radius:50%"></p>
-        <button id="logout-btn">로그아웃</button>
+<div class="glass-card">
+    <div class="brand-header">
+        <h1>✨ Insight Space</h1>
+        <p>소중한 순간을 기록하는 당신만의 공간</p>
     </div>
 
-    <script type="module">
-        // Firebase 모듈 import
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-        
-        // 본인의 Firebase 설정
-        const firebaseConfig = {
-            apiKey: "AIzaSyBB30ZGz7EK5wgNtvrgPyC72FQtOHUEsWY",
-            authDomain: "xxxstorage-17e8d.firebaseapp.com",
-            projectId: "xxxstorage-17e8d",
-            storageBucket: "xxxstorage-17e8d.firebasestorage.app",
-            messagingSenderId: "700686462389",
-            appId: "1:700686462389:web:6d609f0ce5fe5319477dfc",
-            measurementId: "G-DTWYBG2TFT"
-        };
+    <div class="content-panel">
+        <!-- 1. 로그인 영역 (초기 상태) -->
+        <div id="loginSection" class="login-container visible-section">
+            <div class="welcome-icon">🌿</div>
+            <div class="login-title">환영합니다</div>
+            <div class="login-sub">당신의 이야기를 시작하려면<br>Google 계정으로 로그인하세요</div>
+            <button id="googleLoginBtn" class="google-login-btn">
+                <span class="google-icon"></span>
+                <span>Google 계정으로 로그인</span>
+            </button>
+            <div class="footer-note" style="border:none; margin-top:1rem;">안전한 인증 · Firebase</div>
+        </div>
 
-        // Firebase 초기화
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+        <!-- 2. 로그인 후 본문 글 영역 (초기에는 숨김) -->
+        <div id="contentSection" style="display: none;">
+            <div class="dashboard-content">
+                <div class="user-profile-card">
+                    <div class="profile-header">
+                        <div class="avatar-wrapper">
+                            <img id="userPhoto" class="avatar-img" src="" alt="profile">
+                        </div>
+                        <div class="user-details">
+                            <h3 id="userNameDisplay">김구글</h3>
+                            <div class="user-email-badge">
+                                📧 <span id="userEmailDisplay">user@example.com</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="welcome-message">
+                        <p>🍃 <strong>로그인 완료!</strong> 지금부터 인사이트를 공유하고, 영감을 얻을 준비가 되었어요.<br>
+                        구글 계정으로 안전하게 인증되었습니다. 자유롭게 둘러보세요.</p>
+                    </div>
+                </div>
 
-        // DOM 요소
-        const loginSection = document.getElementById('login-section');
-        const userInfoDiv = document.getElementById('user-info');
-        const googleLoginBtn = document.getElementById('google-login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const userNameSpan = document.getElementById('user-name');
-        const userEmailSpan = document.getElementById('user-email');
-        const userPhotoImg = document.getElementById('user-photo');
+                <!-- 본문 에디터 예시 / 블로그 스타일 글 -->
+                <div class="sample-article">
+                    <h4>📘 오늘의 영감</h4>
+                    <p>“당신의 독특한 관점은 누군가에게는 별빛처럼 빛납니다. 이곳에서 아이디어를 확장하고, 
+                    기록하며, 더 나은 내일을 디자인하세요. 세상은 다양한 생각으로 아름다워집니다.”</p>
+                    <p style="margin-top: 12px;">✨ 프리미엄 노트 기능 • 클라우드 저장 • 실시간 동기화</p>
+                </div>
+                <div class="sample-article">
+                    <h4>📌 최신 아티클 미리보기</h4>
+                    <p>AI 시대의 크리에이티브 워크플로우, 구글 로그인 기반의 안전한 접근으로 
+                    당신의 작업물을 보호하세요. 지금 바로 맞춤형 대시보드를 경험해 보세요.</p>
+                </div>
 
-        // 구글 로그인 버튼
-        googleLoginBtn.addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                console.log('로그인 성공:', result.user);
-            } catch (error) {
-                console.error('로그인 에러:', error);
-                alert('로그인 실패: ' + error.message);
-            }
-        });
+                <div class="action-row">
+                    <button id="logoutBtnModern" class="logout-btn">
+                        🚪 로그아웃
+                    </button>
+                </div>
+                <div class="footer-note">
+                    보안 연결 | Google 인증 제공
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        // 로그아웃 버튼
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                console.log('로그아웃 성공');
-            } catch (error) {
-                console.error('로그아웃 에러:', error);
-            }
-        });
+<script type="module">
+    // Firebase 모듈 (최신 안정 버전)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    
+    // 본인의 Firebase 구성 (제공된 config)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBB30ZGz7EK5wgNtvrgPyC72FQtOHUEsWY",
+        authDomain: "xxxstorage-17e8d.firebaseapp.com",
+        projectId: "xxxstorage-17e8d",
+        storageBucket: "xxxstorage-17e8d.firebasestorage.app",
+        messagingSenderId: "700686462389",
+        appId: "1:700686462389:web:6d609f0ce5fe5319477dfc",
+        measurementId: "G-DTWYBG2TFT"
+    };
 
-        // 로그인 상태 감지
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // 로그인됨
-                loginSection.style.display = 'none';
-                userInfoDiv.style.display = 'block';
-                userNameSpan.textContent = user.displayName;
-                userEmailSpan.textContent = user.email;
-                userPhotoImg.src = user.photoURL || '';
-            } else {
-                // 로그아웃됨
-                loginSection.style.display = 'block';
-                userInfoDiv.style.display = 'none';
-            }
-        });
-    </script>
+    // 초기화
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' }); // 계정 선택 가능하게
+
+    // DOM 요소들
+    const loginContainerDiv = document.getElementById('loginSection');
+    const contentSectionDiv = document.getElementById('contentSection');
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const logoutModernBtn = document.getElementById('logoutBtnModern');
+    
+    // 유저 정보 표시 요소
+    const userNameSpan = document.getElementById('userNameDisplay');
+    const userEmailSpan = document.getElementById('userEmailDisplay');
+    const userPhotoImg = document.getElementById('userPhoto');
+
+    // 에러 처리 핸들러 (팝업 관련)
+    const handleAuthError = (error) => {
+        console.error("Auth Error:", error);
+        let errorMsg = "로그인 중 문제가 발생했습니다. ";
+        if (error.code === 'auth/popup-blocked') {
+            errorMsg = "팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.";
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMsg = "네트워크 연결을 확인해주세요.";
+        } else {
+            errorMsg += error.message;
+        }
+        alert(errorMsg);
+    };
+
+    // ========== UI 업데이트 함수 (로그인 상태에 따라) ==========
+    const updateUIBasedOnUser = (user) => {
+        if (user) {
+            // 로그인 상태: 로그인 섹션 숨기고, 본문 콘텐츠 영역을 보여줌
+            loginContainerDiv.style.display = 'none';
+            contentSectionDiv.style.display = 'block';
+            
+            // 사용자 정보 렌더링
+            const displayName = user.displayName || "구글 사용자";
+            const email = user.email || "이메일 없음";
+            const photoURL = user.photoURL || "https://ui-avatars.com/api/?background=2a7de1&color=fff&rounded=true&bold=true&size=80&name=" + encodeURIComponent(displayName.charAt(0));
+            
+            userNameSpan.textContent = displayName;
+            userEmailSpan.textContent = email;
+            userPhotoImg.src = photoURL;
+            userPhotoImg.alt = displayName;
+        } else {
+            // 로그아웃 상태: 로그인 섹션 표시, 본문 콘텐츠 완전히 숨김
+            loginContainerDiv.style.display = 'flex';  // 원래 flex 정렬 유지 (컨테이너)
+            loginContainerDiv.style.flexDirection = 'column';
+            loginContainerDiv.style.alignItems = 'center';
+            contentSectionDiv.style.display = 'none';
+        }
+    };
+
+    // 구글 로그인 (팝업)
+    const handleGoogleLogin = async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            // 로그인 성공 시 onAuthStateChanged 에서 자동으로 UI 업데이트 처리
+            console.log("🎉 로그인 성공:", result.user.displayName);
+        } catch (error) {
+            handleAuthError(error);
+        }
+    };
+
+    // 로그아웃
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            console.log("👋 로그아웃 완료");
+            // 상태 변경에 따라 UI가 자동 갱신됨
+        } catch (error) {
+            console.error("로그아웃 오류:", error);
+            alert("로그아웃 중 오류가 발생했습니다: " + error.message);
+        }
+    };
+
+    // 초기 로그인 상태 감지 및 UI 전환 (본문/로그인 창 전환)
+    onAuthStateChanged(auth, (user) => {
+        updateUIBasedOnUser(user);
+        // 추가로 콘솔 메시지
+        if (user) {
+            // 로그인 할 때마다 환영 부드럽게 표시 (이미 업데이트 됨)
+            // 의미: 본문 글이 나타나고 로그인 창 사라짐
+        } else {
+            // 완전히 로그아웃 상태 -> 로그인 섹션 부드럽게 보임
+        }
+    });
+
+    // 버튼 이벤트 연결
+    googleLoginBtn.addEventListener('click', handleGoogleLogin);
+    if (logoutModernBtn) {
+        logoutModernBtn.addEventListener('click', handleLogout);
+    } else {
+        // fallback: 만약 동적으로 생성되는 경우 대비
+        console.warn("logout 버튼이 존재하지 않지만 정상 범위");
+    }
+
+    // 초기 로딩 시에 loginContainerDiv 스타일 보정: flex 중앙 정렬 유지
+    // 추가로, 사용자가 이미 로그인 세션이 있을 경우 (새로고침 시에) onAuthStateChanged가 먼저 실행되면서
+    // 올바르게 본문 표시됨.
+    // 추가적으로 로그인 섹션 스타일 미세조정 (기존 hidden 클래스 제거)
+    const styleFix = () => {
+        if (loginContainerDiv.style.display === 'none') {
+            // 아무것도 안함
+        } else {
+            loginContainerDiv.style.display = 'flex';
+            loginContainerDiv.style.flexDirection = 'column';
+            loginContainerDiv.style.alignItems = 'center';
+        }
+    };
+    styleFix();
+
+    // 이미 인증된 유저인지 빠른 재확인 (중복 방지)
+    window.addEventListener('load', () => {
+        // 이미 로그인 상태면 onAuthStateChanged가 먼저 트리거 됨. 
+        // 만약 빠르게 표시되기 전에 잠시 깜빡임 방지용 추가 처리 없음
+        console.log("Modern Login Widget Loaded");
+    });
+</script>
 </body>
 </html>
